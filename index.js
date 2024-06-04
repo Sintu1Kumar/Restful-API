@@ -50,11 +50,11 @@ app.delete("/employees/:id", (req, res) => {
 });
 
 // Post Request
-app.get("/employees", (req, res) => {
+app.post("/employees", (req, res) => {
   const emp = req.body;
   const empData = [emp.name, emp.salary];
   connection.query(
-    "insert into employee(name, salary)values(?)",
+    "insert into employee(name,salary)values(?)",
     [empData],
     (err, rows) => {
       if (err) {
@@ -62,6 +62,56 @@ app.get("/employees", (req, res) => {
       } else {
         //   console.log(rows);
         res.send(rows);
+      }
+    }
+  );
+});
+
+// Patch Request
+app.patch("/employees", (req, res) => {
+  const emp = req.body;
+  connection.query(
+    "update employee set ? where id =" + emp.id,
+    [emp],
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+      } else {
+        //   console.log(rows);
+        res.send(rows);
+      }
+    }
+  );
+});
+
+// Put Request
+app.put("/employees", (req, res) => {
+  const emp = req.body;
+  connection.query(
+    "update employee set ? where id =" + emp.id,
+    [emp],
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+      } else {
+        //   console.log(rows);
+        if (rows.affectedRows == 0) {
+          const empData = [emp.name, emp.salary];
+          connection.query(
+            "insert into employee(name,salary)values(?)",
+            [empData],
+            (err, rows) => {
+              if (err) {
+                console.log(err);
+              } else {
+                //   console.log(rows);
+                res.send(rows);
+              }
+            }
+          );
+        } else {
+          res.send(rows);
+        }
       }
     }
   );
